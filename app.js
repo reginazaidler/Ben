@@ -16,7 +16,6 @@ let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||default
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
 let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||['omelet','yogurt','pasta','schnitzel','salad','soup'];
 let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
-let mealShuffle={breakfast:0,lunch:0,dinner:0};
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
 let installPrompt=null;
@@ -26,11 +25,8 @@ function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
 function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))}
 function saveFoods(){localStorage.setItem('myFavoriteFoods',JSON.stringify(favoriteFoods));localStorage.setItem('myCustomFoods',JSON.stringify(customFoods))}
 function allFoods(){return [...foodCatalog,...customFoods]}
-function dateSeed(){const today=new Date();return Number(`${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`)}
-function suggestedFood(meal){const options=allFoods().filter(food=>food.meal===meal&&favoriteFoods.includes(food.id));if(!options.length)return null;return options[(dateSeed()+mealShuffle[meal])%options.length]}
 function renderFoods(){
- const suggestions=$('#mealSuggestions'),choices=$('#foodChoices');if(!suggestions||!choices)return;
- suggestions.innerHTML=mealTypes.map(type=>{const food=suggestedFood(type.id);return `<article class="meal-card"><span class="meal-time">${type.icon} ${type.label}</span>${food?`<div class="suggestion-emoji">${food.emoji}</div><h3>${escapeHtml(food.name)}</h3><button type="button" data-shuffle-meal="${type.id}" aria-label="הצעה אחרת ל${type.label}">↻ משהו אחר</button>`:`<div class="suggestion-emoji">➕</div><h3>עוד אין מאכלים</h3><p>בחרו מאכלים מהרשימה</p>`}</article>`}).join('');
+ const choices=$('#foodChoices');if(!choices)return;
  choices.innerHTML=mealTypes.map(type=>`<section class="food-group"><h3>${type.icon} ${type.label}</h3><div>${allFoods().filter(food=>food.meal===type.id).map(food=>`<button type="button" class="food-choice ${favoriteFoods.includes(food.id)?'selected':''}" data-food-id="${food.id}" aria-pressed="${favoriteFoods.includes(food.id)}"><span>${food.emoji}</span>${escapeHtml(food.name)}<b>${favoriteFoods.includes(food.id)?'✓':'＋'}</b></button>`).join('')}</div></section>`).join('');
  $('#foodCount').textContent=`${favoriteFoods.length} מאכלים ברשימה`;
 }
@@ -122,7 +118,6 @@ document.addEventListener('click',e=>{
  const edit=e.target.closest('[data-edit]');if(edit){openEdit(Number(edit.dataset.edit))}
  const del=e.target.closest('[data-delete]');if(del){deleteId=Number(del.dataset.delete);const a=activities.find(x=>x.id===deleteId);$('#deleteText').textContent=`אתה בטוח שאתה רוצה למחוק את חוג ${a.name}?`;$('#deleteDialog').showModal()}
  const food=e.target.closest('[data-food-id]');if(food){const id=food.dataset.foodId;favoriteFoods=favoriteFoods.includes(id)?favoriteFoods.filter(item=>item!==id):[...favoriteFoods,id];saveFoods();renderFoods()}
- const shuffle=e.target.closest('[data-shuffle-meal]');if(shuffle){mealShuffle[shuffle.dataset.shuffleMeal]++;renderFoods()}
 });
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}
@@ -132,8 +127,7 @@ $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').on
 $('#settingsBtn').onclick=()=>go('settings');
 $('#enableNotifications').onclick=enableNotifications;
 $('#shareAppBtn').onclick=shareApp;
-$('#shuffleAllMeals').onclick=()=>{mealTypes.forEach(type=>mealShuffle[type.id]++);renderFoods()};
-$('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף להצעות שלך! 😋')});
+$('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
 $('#installAppBtn').onclick=installApp;
 $('#dismissInstall').onclick=()=>{$('#installCard').hidden=true;localStorage.setItem('installPromptDismissed','true')};
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;showInstallCard()});

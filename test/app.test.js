@@ -69,15 +69,16 @@ test('application can be installed and works offline as a PWA', () => {
   assert.match(worker, /caches\.match/);
 });
 
-test('food planner stores favorites and suggests breakfast, lunch, and dinner', () => {
+test('food list stores favorites for breakfast, lunch, and dinner without suggestions', () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const js = fs.readFileSync('app.js', 'utf8');
   assert.ok(html.includes('id="foodPage"'));
-  assert.ok(html.includes('id="mealSuggestions"'));
   assert.ok(html.includes('id="foodChoices"'));
   assert.ok(html.includes('id="customFoodForm"'));
   for (const meal of ['ארוחת בוקר', 'ארוחת צהריים', 'ארוחת ערב']) assert.ok(js.includes(meal));
   assert.match(js, /localStorage\.setItem\('myFavoriteFoods'/);
-  assert.match(js, /function suggestedFood/);
-  assert.match(js, /data-shuffle-meal/);
+  assert.ok(!html.includes('id="mealSuggestions"'));
+  assert.ok(!html.includes('id="shuffleAllMeals"'));
+  assert.doesNotMatch(js, /function suggestedFood/);
+  assert.doesNotMatch(js, /data-shuffle-meal/);
 });
