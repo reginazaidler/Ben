@@ -1,0 +1,15 @@
+{
+  "name": "החוגים שלי",
+  "short_name": "החוגים שלי",
+  "description": "לוח חוגים אישי לילדים",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eaf8ff",
+  "theme_color": "#6bc5f4",
+  "icons": [
+    { "src": "icons/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#6bc5f4" />
+  <meta name="description" content="לוח חוגים אישי לילדים — גם כשהמכשיר לא מחובר לאינטרנט." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>החוגים שלי</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/app-icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -26,6 +32,12 @@
         <div class="share-illustration" aria-hidden="true">👫</div>
         <div><h2 id="shareTitle">רוצה שגם החברים שלך ישתמשו?</h2><p>שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
         <button type="button" id="shareAppBtn"><span aria-hidden="true">↗</span> שיתוף עם חברים</button>
+      </section>
+      <section class="install-card" id="installCard" aria-labelledby="installTitle" hidden>
+        <div class="install-icon" aria-hidden="true">⭐</div>
+        <div><h2 id="installTitle">רוצה את החוגים במסך הבית?</h2><p>מתקינים פעם אחת, ונכנסים כמו לכל אפליקציה — גם בלי אינטרנט.</p></div>
+        <button type="button" id="installAppBtn">התקנת האפליקציה</button>
+        <button type="button" class="install-close" id="dismissInstall" aria-label="סגירת הצעת ההתקנה">×</button>
       </section>
       <section class="next-card" id="nextCard"></section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
