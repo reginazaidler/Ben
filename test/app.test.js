@@ -6,6 +6,8 @@ test('application shell includes core Hebrew navigation and form', () => {
   const html = fs.readFileSync('index.html', 'utf8');
   for (const text of ['החוגים שלי', 'שלום בן!', 'הפרופיל של בן', 'הוספת חוג חדש', 'השבוע שלי', 'שמור את החוג']) assert.ok(html.includes(text));
   assert.ok(!html.includes('נועם'));
+  assert.ok(html.includes('class="star-banner"'));
+  assert.equal((html.match(/<span>★<\/span>/g) || []).length, 7);
 });
 
 test('application logic persists activities and supports editing and deletion', () => {
@@ -24,4 +26,8 @@ test('settings page edits and locally persists the profile', () => {
   assert.match(js, /localStorage\.setItem\('myProfile'/);
   assert.match(js, /settingsForm.*addEventListener\('submit'/);
   assert.match(js, /settingsBtn.*go\('settings'\)/);
+  assert.ok(html.includes('id="largeText"'));
+  assert.ok(html.includes('id="reduceMotion"'));
+  assert.match(js, /applyPreferences/);
+  assert.match(js, /largeText:\$\('#largeText'\)\.checked/);
 });

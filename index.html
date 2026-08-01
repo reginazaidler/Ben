@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="star-banner" aria-hidden="true"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
   <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
   <main class="app-shell">
     <header class="topbar">
@@ -52,6 +53,11 @@
         <form class="form-card settings-card" id="settingsForm">
           <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
           <label for="userName">איך קוראים לך?<input id="userName" name="userName" required maxlength="30" autocomplete="name" placeholder="השם שלך" /></label>
+          <fieldset class="preference-list">
+            <legend>העדפות תצוגה</legend>
+            <label class="toggle-row" for="largeText"><span><b>טקסט גדול</b><small>מגדיל את הטקסט כדי שיהיה קל יותר לקרוא</small></span><input id="largeText" name="largeText" type="checkbox" role="switch" /></label>
+            <label class="toggle-row" for="reduceMotion"><span><b>פחות תנועה</b><small>מבטל גלילה ואנימציות במסכים</small></span><input id="reduceMotion" name="reduceMotion" type="checkbox" role="switch" /></label>
+          </fieldset>
           <button class="save-button" type="submit">✓ שמירת השינויים</button>
           <p class="local-note">🔒 השם והחוגים נשמרים באופן מקומי בדפדפן ולא נשלחים לאינטרנט.</p>
         </form>
