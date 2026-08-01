@@ -14,3 +14,14 @@ test('application logic persists activities and supports editing and deletion', 
   assert.match(js, /openEdit/);
   assert.match(js, /confirmDelete/);
 });
+
+test('settings page edits and locally persists the profile', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const js = fs.readFileSync('app.js', 'utf8');
+  assert.ok(html.includes('id="settingsPage"'));
+  assert.ok(html.includes('id="settingsForm"'));
+  assert.ok(html.includes('id="settingsActivityList"'));
+  assert.match(js, /localStorage\.setItem\('myProfile'/);
+  assert.match(js, /settingsForm.*addEventListener\('submit'/);
+  assert.match(js, /settingsBtn.*go\('settings'\)/);
+});

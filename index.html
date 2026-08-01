@@ -16,11 +16,11 @@
     <header class="topbar">
       <button class="icon-button" id="settingsBtn" aria-label="הגדרות">⚙️</button>
       <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
-      <div class="profile" aria-label="הפרופיל של בן"><span>👦🏻</span><b>בן</b></div>
+      <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span>👦🏻</span><b id="profileName">בן</b></div>
     </header>
 
     <section class="page active" id="homePage">
-      <div class="welcome"><div><p>שלום בן! 👋</p><h1>איזה כיף לראות אותך!</h1><span>כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
+      <div class="welcome"><div><p id="welcomeName">שלום בן! 👋</p><h1>איזה כיף לראות אותך!</h1><span>כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
       <section class="next-card" id="nextCard"></section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
       <div class="section-title"><div><h2>כל החוגים שלי</h2><p>הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
@@ -44,6 +44,22 @@
     <section class="page" id="weekPage">
       <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>השבוע שלי</h1><p>כל הכיף שמחכה לך השבוע</p></div></div>
       <div class="week-board" id="weekBoard"></div>
+    </section>
+
+    <section class="page" id="settingsPage">
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>הגדרות</h1><p>הפרטים שלך נשמרים במכשיר הזה בלבד</p></div></div>
+      <div class="settings-layout">
+        <form class="form-card settings-card" id="settingsForm">
+          <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
+          <label for="userName">איך קוראים לך?<input id="userName" name="userName" required maxlength="30" autocomplete="name" placeholder="השם שלך" /></label>
+          <button class="save-button" type="submit">✓ שמירת השינויים</button>
+          <p class="local-note">🔒 השם והחוגים נשמרים באופן מקומי בדפדפן ולא נשלחים לאינטרנט.</p>
+        </form>
+        <section class="form-card settings-card" aria-labelledby="manageTitle">
+          <div class="settings-section-heading"><div><h2 id="manageTitle">החוגים שלי</h2><p>אפשר לערוך או למחוק חוג שכבר שמרת.</p></div><button class="small-add" data-go="add">＋ הוספת חוג</button></div>
+          <div class="settings-activities" id="settingsActivityList"></div>
+        </section>
+      </div>
     </section>
   </main>
 
