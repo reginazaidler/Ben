@@ -31,3 +31,14 @@ test('settings page edits and locally persists the profile', () => {
   assert.match(js, /applyPreferences/);
   assert.match(js, /largeText:\$\('#largeText'\)\.checked/);
 });
+
+test('notification controls request permission and schedule activity reminders', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const js = fs.readFileSync('app.js', 'utf8');
+  assert.ok(html.includes('id="enableNotifications"'));
+  assert.ok(html.includes('id="notificationStatus"'));
+  assert.match(js, /Notification\.requestPermission\(\)/);
+  assert.match(js, /function nextReminderDate/);
+  assert.match(js, /function scheduleNotifications/);
+  assert.match(js, /new Notification/);
+});

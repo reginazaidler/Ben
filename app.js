@@ -9,6 +9,7 @@ const defaults=[
 let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||defaults;
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
+let notificationTimers=[];
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
@@ -16,6 +17,37 @@ function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))
 function applyPreferences(){
  document.body.classList.toggle('large-text',Boolean(profile.largeText));
  document.body.classList.toggle('reduce-motion',Boolean(profile.reduceMotion));
+}
+function reminderMinutes(reminder){return {'10 דקות':10,'30 דקות':30,'שעה':60,'שעתיים':120}[reminder]||0}
+function nextReminderDate(activity,now=new Date()){
+ const dayIndex=days.indexOf(activity.day),[hours,minutes]=activity.time.split(':').map(Number);
+ if(dayIndex<0||!Number.isFinite(hours)||!Number.isFinite(minutes))return null;
+ const event=new Date(now);event.setHours(hours,minutes,0,0);
+ event.setDate(event.getDate()+((dayIndex-event.getDay()+7)%7));
+ const reminder=new Date(event.getTime()-reminderMinutes(activity.reminder)*60000);
+ if(reminder<=now)reminder.setDate(reminder.getDate()+7);
+ return reminder;
+}
+function showActivityNotification(activity){
+ if(!('Notification' in window)||Notification.permission!=='granted')return;
+ const notification=new Notification(`${activity.icon} הגיע הזמן להתכונן ל${activity.name}!`,{body:`החוג מתחיל ב־${activity.time}${activity.place?` · ${activity.place}`:''}`,tag:`activity-${activity.id}`});
+ notification.onclick=()=>{window.focus();notification.close()};
+}
+function scheduleNotifications(){
+ notificationTimers.forEach(clearTimeout);notificationTimers=[];
+ if(!('Notification' in window)||Notification.permission!=='granted')return;
+ const now=new Date();
+ activities.forEach(activity=>{const date=nextReminderDate(activity,now);if(!date)return;const delay=date-now;if(delay<=2147483647)notificationTimers.push(setTimeout(()=>{showActivityNotification(activity);scheduleNotifications()},delay))});
+}
+function renderNotificationStatus(){
+ const status=$('#notificationStatus'),button=$('#enableNotifications');if(!status||!button)return;
+ if(!('Notification' in window)){status.textContent='הדפדפן הזה לא תומך בהתראות';button.disabled=true;return}
+ const messages={granted:'ההתראות פעילות כל עוד האפליקציה פתוחה',denied:'ההתראות חסומות בהגדרות הדפדפן',default:'כדי לקבל תזכורת, צריך לאשר התראות'};
+ status.textContent=messages[Notification.permission];button.disabled=Notification.permission!=='default';button.textContent=Notification.permission==='granted'?'ההתראות פעילות':Notification.permission==='denied'?'ההתראות חסומות':'הפעלת התראות';
+}
+async function enableNotifications(){
+ if(!('Notification' in window))return;
+ const permission=await Notification.requestPermission();renderNotificationStatus();scheduleNotifications();toast(permission==='granted'?'ההתראות הופעלו בהצלחה 🔔':'לא ניתן להפעיל התראות. אפשר לשנות זאת בהגדרות הדפדפן');
 }
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
@@ -26,6 +58,7 @@ function render(){
  $('#largeText').checked=Boolean(profile.largeText);
  $('#reduceMotion').checked=Boolean(profile.reduceMotion);
  applyPreferences();
+ renderNotificationStatus();
  const next=activities[0];
  $('#nextCard').innerHTML=next?`<div class="next-label">✨ החוג הבא שלי</div><div class="next-content"><div class="big-icon" style="--soft:${soft(next.color)}">${next.icon}</div><div class="next-info"><h2>${next.name}</h2><div class="details"><span>🗓️ יום ${next.day}</span><span>🕐 ${next.time}</span><span>📍 ${next.place||'המקום עדיין לא נקבע'}</span></div></div><div class="countdown">⏳ בעוד שעתיים</div></div>`:`<h2>אין לך חוגים היום</h2><p>אפשר לשחק או לנוח 🌈</p>`;
  $('#nextCard').style.setProperty('--accent',next?.color||'#45a96e');
@@ -50,8 +83,10 @@ document.addEventListener('click',e=>{
 });
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}
-$('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
+$('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();scheduleNotifications();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
 $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
-$('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();$('#deleteDialog').close();toast('החוג נמחק')};
+$('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#settingsBtn').onclick=()=>go('settings');
-setupChoices();render();
+$('#enableNotifications').onclick=enableNotifications;
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleNotifications()});
+setupChoices();render();scheduleNotifications();
