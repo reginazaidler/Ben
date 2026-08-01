@@ -49,6 +49,16 @@ async function enableNotifications(){
  if(!('Notification' in window))return;
  const permission=await Notification.requestPermission();renderNotificationStatus();scheduleNotifications();toast(permission==='granted'?'ההתראות הופעלו בהצלחה 🔔':'לא ניתן להפעיל התראות. אפשר לשנות זאת בהגדרות הדפדפן');
 }
+async function shareApp(){
+ const shareData={title:'החוגים שלי',text:'בואו ליצור לוח חוגים אישי משלכם!',url:window.location.href};
+ try{
+  if(navigator.share){await navigator.share(shareData);return}
+  await navigator.clipboard.writeText(shareData.url);
+  toast('הקישור הועתק — אפשר לשלוח אותו לחברים! 📋');
+ }catch(error){
+  if(error.name!=='AbortError')toast('לא הצלחנו לשתף. אפשר להעתיק את הקישור משורת הכתובת');
+ }
+}
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
  $('#profileName').textContent=profile.name;
@@ -88,5 +98,6 @@ $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#settingsBtn').onclick=()=>go('settings');
 $('#enableNotifications').onclick=enableNotifications;
+$('#shareAppBtn').onclick=shareApp;
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleNotifications()});
 setupChoices();render();scheduleNotifications();
