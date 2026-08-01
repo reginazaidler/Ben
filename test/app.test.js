@@ -4,7 +4,8 @@ const fs = require('node:fs');
 
 test('application shell includes core Hebrew navigation and form', () => {
   const html = fs.readFileSync('index.html', 'utf8');
-  for (const text of ['החוגים שלי', 'הוספת חוג חדש', 'השבוע שלי', 'שמור את החוג']) assert.ok(html.includes(text));
+  for (const text of ['החוגים שלי', 'שלום בן!', 'הפרופיל של בן', 'הוספת חוג חדש', 'השבוע שלי', 'שמור את החוג']) assert.ok(html.includes(text));
+  assert.ok(!html.includes('נועם'));
 });
 
 test('application logic persists activities and supports editing and deletion', () => {
