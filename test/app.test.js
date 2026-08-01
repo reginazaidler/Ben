@@ -24,4 +24,8 @@ test('settings page edits and locally persists the profile', () => {
   assert.match(js, /localStorage\.setItem\('myProfile'/);
   assert.match(js, /settingsForm.*addEventListener\('submit'/);
   assert.match(js, /settingsBtn.*go\('settings'\)/);
+  assert.ok(html.includes('id="largeText"'));
+  assert.ok(html.includes('id="reduceMotion"'));
+  assert.match(js, /applyPreferences/);
+  assert.match(js, /largeText:\$\('#largeText'\)\.checked/);
 });
