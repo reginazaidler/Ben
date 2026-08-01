@@ -42,3 +42,14 @@ test('notification controls request permission and schedule activity reminders',
   assert.match(js, /function scheduleNotifications/);
   assert.match(js, /new Notification/);
 });
+
+test('friends can share the application link with a native or clipboard fallback', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const js = fs.readFileSync('app.js', 'utf8');
+  assert.ok(html.includes('id="shareAppBtn"'));
+  assert.ok(html.includes('שיתוף עם חברים'));
+  assert.ok(html.includes('נשמרים רק בדפדפן ובמכשיר שלו'));
+  assert.match(js, /navigator\.share/);
+  assert.match(js, /navigator\.clipboard\.writeText/);
+  assert.match(js, /shareAppBtn.*shareApp/);
+});
