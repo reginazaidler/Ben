@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#6bc5f4" />
+  <meta name="description" content="לוח חוגים אישי לילדים — גם כשהמכשיר לא מחובר לאינטרנט." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>החוגים שלי</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/app-icon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -26,6 +32,12 @@
         <div class="share-illustration" aria-hidden="true">👫</div>
         <div><h2 id="shareTitle">רוצה שגם החברים שלך ישתמשו?</h2><p>שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
         <button type="button" id="shareAppBtn"><span aria-hidden="true">↗</span> שיתוף עם חברים</button>
+      </section>
+      <section class="install-card" id="installCard" aria-labelledby="installTitle">
+        <div class="install-icon" aria-hidden="true">⭐</div>
+        <div><h2 id="installTitle">רוצה את החוגים במסך הבית?</h2><p>לחצו כאן ונראה בדיוק איך מתקינים — צעד אחר צעד.</p></div>
+        <button type="button" id="installAppBtn">איך מתקינים?</button>
+        <button type="button" class="install-close" id="dismissInstall" aria-label="סגירת הצעת ההתקנה">×</button>
       </section>
       <section class="next-card" id="nextCard"></section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
@@ -81,6 +93,17 @@
   <nav class="bottom-nav"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
+  <dialog id="installDialog" class="install-dialog" aria-labelledby="installDialogTitle">
+    <button type="button" class="dialog-close" id="closeInstallDialog" aria-label="סגירה">×</button>
+    <div class="dialog-icon">📲</div><h2 id="installDialogTitle">התקנת החוגים שלי</h2>
+    <p class="install-intro">לא צריך להוריד מחנות האפליקציות. בחרו את סוג המכשיר ועקבו אחרי השלבים:</p>
+    <div class="device-tabs" role="tablist" aria-label="סוג המכשיר">
+      <button type="button" data-device="android">Android</button><button type="button" data-device="iphone">iPhone / iPad</button><button type="button" data-device="computer">מחשב</button>
+    </div>
+    <ol id="installSteps" class="install-steps"></ol>
+    <button type="button" class="save-button direct-install" id="directInstallBtn" hidden>התקנה עכשיו</button>
+    <small class="install-note">חשוב: ההתקנה זמינה כשפותחים את האתר בדפדפן Chrome או Safari.</small>
+  </dialog>
   <script src="app.js"></script>
 </body>
 </html>
