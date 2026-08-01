@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6bc5f4" />
+  <title>החוגים שלי</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="icon-button" id="settingsBtn" aria-label="הגדרות">⚙️</button>
+      <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
+      <div class="profile" aria-label="הפרופיל של נועם"><span>👦🏻</span><b>נועם</b></div>
+    </header>
+
+    <section class="page active" id="homePage">
+      <div class="welcome"><div><p>שלום נועם! 👋</p><h1>איזה כיף לראות אותך!</h1><span>כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
+      <section class="next-card" id="nextCard"></section>
+      <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
+      <div class="section-title"><div><h2>כל החוגים שלי</h2><p>הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
+      <div class="activities" id="activityList"></div>
+    </section>
+
+    <section class="page" id="addPage">
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1 id="formTitle">הוספת חוג חדש</h1><p>מלאו כמה פרטים קטנים — וזהו!</p></div></div>
+      <form class="form-card" id="activityForm">
+        <input type="hidden" id="editId" />
+        <label>איך קוראים לחוג? <input id="name" required placeholder="למשל: כדורגל" /></label>
+        <fieldset><legend>בחרו ציור לחוג</legend><div class="choice-grid icons" id="iconChoices"></div></fieldset>
+        <fieldset><legend>בחרו צבע</legend><div class="color-choices" id="colorChoices"></div></fieldset>
+        <fieldset><legend>באיזה יום החוג?</legend><div class="choice-grid days" id="dayChoices"></div></fieldset>
+        <div class="two-columns"><label>באיזו שעה? <input id="time" type="time" required value="17:00" /></label><label>איפה החוג? <input id="place" placeholder="למשל: המתנ״ס" /></label></div>
+        <label>מתי להזכיר לך? <select id="reminder"><option value="10 דקות">10 דקות לפני</option><option value="30 דקות">30 דקות לפני</option><option value="שעה" selected>שעה לפני</option><option value="שעתיים">שעתיים לפני</option></select></label>
+        <button class="save-button" type="submit">✓ שמור את החוג</button>
+      </form>
+    </section>
+
+    <section class="page" id="weekPage">
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>השבוע שלי</h1><p>כל הכיף שמחכה לך השבוע</p></div></div>
+      <div class="week-board" id="weekBoard"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button></nav>
+  <div class="toast" id="toast" role="status"></div>
+  <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
