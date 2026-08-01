@@ -40,6 +40,11 @@
         <button type="button" class="install-close" id="dismissInstall" aria-label="סגירת הצעת ההתקנה">×</button>
       </section>
       <section class="next-card" id="nextCard"></section>
+      <section class="food-promo" aria-labelledby="foodPromoTitle">
+        <div class="food-promo-icon" aria-hidden="true">🍽️</div>
+        <div><h2 id="foodPromoTitle">מה אוכלים היום?</h2><p>בוחרים מאכלים שאוהבים ומקבלים הצעה לבוקר, לצהריים ולערב.</p></div>
+        <button type="button" data-go="food">להצעות שלי ←</button>
+      </section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
       <div class="section-title"><div><h2>כל החוגים שלי</h2><p>הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
       <div class="activities" id="activityList"></div>
@@ -62,6 +67,24 @@
     <section class="page" id="weekPage">
       <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>השבוע שלי</h1><p>כל הכיף שמחכה לך השבוע</p></div></div>
       <div class="week-board" id="weekBoard"></div>
+    </section>
+
+    <section class="page" id="foodPage">
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>מה אוכלים היום?</h1><p>שלוש הצעות טעימות, רק מהמאכלים שאוהבים</p></div></div>
+      <section class="meal-hero" aria-labelledby="todayMealsTitle">
+        <div class="meal-title"><div><span>🍴 ההצעות היומיות שלי</span><h2 id="todayMealsTitle">התפריט להיום</h2></div><button type="button" id="shuffleAllMeals">🎲 הצעות אחרות</button></div>
+        <div class="meal-suggestions" id="mealSuggestions"></div>
+      </section>
+      <section class="food-library" aria-labelledby="foodLibraryTitle">
+        <div class="food-library-heading"><div><h2 id="foodLibraryTitle">המאכלים שאני אוהב</h2><p>לוחצים על מאכל כדי להוסיף או להסיר אותו מההצעות.</p></div><span id="foodCount" class="food-count"></span></div>
+        <div id="foodChoices" class="food-groups"></div>
+        <form id="customFoodForm" class="custom-food-form">
+          <div><h3>לא מצאת את המאכל שלך?</h3><p>אפשר להוסיף כל מאכל שאוהבים.</p></div>
+          <label>שם המאכל<input id="customFoodName" required maxlength="40" placeholder="למשל: קוסקוס" /></label>
+          <label>מתאים ל־<select id="customFoodMeal"><option value="breakfast">ארוחת בוקר</option><option value="lunch">ארוחת צהריים</option><option value="dinner">ארוחת ערב</option></select></label>
+          <button type="submit">＋ הוספה לרשימה</button>
+        </form>
+      </section>
     </section>
 
     <section class="page" id="settingsPage">
@@ -90,7 +113,7 @@
     </section>
   </main>
 
-  <nav class="bottom-nav"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button></nav>
+  <nav class="bottom-nav"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>מה אוכלים?</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
   <script src="app.js"></script>
