@@ -53,3 +53,18 @@ test('friends can share the application link with a native or clipboard fallback
   assert.match(js, /navigator\.clipboard\.writeText/);
   assert.match(js, /shareAppBtn.*shareApp/);
 });
+
+test('application can be installed and works offline as a PWA', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const js = fs.readFileSync('app.js', 'utf8');
+  const manifest = JSON.parse(fs.readFileSync('manifest.webmanifest', 'utf8'));
+  const worker = fs.readFileSync('service-worker.js', 'utf8');
+  assert.ok(html.includes('rel="manifest"'));
+  assert.ok(html.includes('id="installAppBtn"'));
+  assert.equal(manifest.display, 'standalone');
+  assert.ok(manifest.icons.length > 0);
+  assert.match(js, /beforeinstallprompt/);
+  assert.match(js, /serviceWorker\.register/);
+  assert.match(worker, /cache\.addAll\(APP_SHELL\)/);
+  assert.match(worker, /caches\.match/);
+});

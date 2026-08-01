@@ -10,6 +10,7 @@ let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||default
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
+let installPrompt=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
@@ -59,6 +60,16 @@ async function shareApp(){
   if(error.name!=='AbortError')toast('לא הצלחנו לשתף. אפשר להעתיק את הקישור משורת הכתובת');
  }
 }
+function showInstallCard(){
+ if(installPrompt&&!localStorage.getItem('installPromptDismissed'))$('#installCard').hidden=false;
+}
+async function installApp(){
+ if(!installPrompt)return;
+ installPrompt.prompt();
+ const {outcome}=await installPrompt.userChoice;
+ installPrompt=null;$('#installCard').hidden=true;
+ if(outcome==='accepted')toast('האפליקציה הותקנה בהצלחה! ⭐');
+}
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
  $('#profileName').textContent=profile.name;
@@ -99,5 +110,11 @@ $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').on
 $('#settingsBtn').onclick=()=>go('settings');
 $('#enableNotifications').onclick=enableNotifications;
 $('#shareAppBtn').onclick=shareApp;
+$('#installAppBtn').onclick=installApp;
+$('#dismissInstall').onclick=()=>{$('#installCard').hidden=true;localStorage.setItem('installPromptDismissed','true')};
+window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;showInstallCard()});
+window.addEventListener('appinstalled',()=>{installPrompt=null;$('#installCard').hidden=true;toast('האפליקציה מוכנה במסך הבית! 🎉')});
+if(window.matchMedia('(display-mode: standalone)').matches)document.body.classList.add('standalone');
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleNotifications()});
 setupChoices();render();scheduleNotifications();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
