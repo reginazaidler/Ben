@@ -1,4 +1,4 @@
-const CACHE_NAME='my-activities-v1';
+const CACHE_NAME='my-activities-v2';
 const APP_SHELL=['./','./index.html','./styles.css','./app.js','./manifest.webmanifest','./icons/app-icon.svg'];
 
 self.addEventListener('install',event=>{
