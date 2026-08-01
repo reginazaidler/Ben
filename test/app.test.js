@@ -42,3 +42,13 @@ test('notification controls request permission and schedule activity reminders',
   assert.match(js, /function scheduleNotifications/);
   assert.match(js, /new Notification/);
 });
+
+test('reminders have an enabled-by-default sound and a sound test control', () => {
+  const html = fs.readFileSync('index.html', 'utf8');
+  const js = fs.readFileSync('app.js', 'utf8');
+  assert.ok(html.includes('id="soundEnabled"'));
+  assert.ok(html.includes('id="testSound"'));
+  assert.match(js, /function playReminderSound/);
+  assert.match(js, /showActivityNotification[\s\S]*playReminderSound\(\)/);
+  assert.match(js, /window\.AudioContext\|\|window\.webkitAudioContext/);
+});

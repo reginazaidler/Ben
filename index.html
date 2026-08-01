@@ -57,11 +57,13 @@
             <legend>העדפות תצוגה</legend>
             <label class="toggle-row" for="largeText"><span><b>טקסט גדול</b><small>מגדיל את הטקסט כדי שיהיה קל יותר לקרוא</small></span><input id="largeText" name="largeText" type="checkbox" role="switch" /></label>
             <label class="toggle-row" for="reduceMotion"><span><b>פחות תנועה</b><small>מבטל גלילה ואנימציות במסכים</small></span><input id="reduceMotion" name="reduceMotion" type="checkbox" role="switch" /></label>
+            <label class="toggle-row" for="soundEnabled"><span><b>צליל תזכורת</b><small>משמיע צליל נעים כשהגיע הזמן להתכונן לחוג</small></span><input id="soundEnabled" name="soundEnabled" type="checkbox" role="switch" checked /></label>
           </fieldset>
           <section class="notification-settings" aria-labelledby="notificationTitle">
             <div><b id="notificationTitle">🔔 התראות לחוגים</b><small id="notificationStatus">בודקים אם אפשר להציג התראות…</small></div>
             <button type="button" class="notification-button" id="enableNotifications">הפעלת התראות</button>
           </section>
+          <button type="button" class="sound-test-button" id="testSound">🔊 בדיקת צליל התזכורת</button>
           <button class="save-button" type="submit">✓ שמירת השינויים</button>
           <p class="local-note">🔒 השם והחוגים נשמרים באופן מקומי בדפדפן ולא נשלחים לאינטרנט.</p>
         </form>

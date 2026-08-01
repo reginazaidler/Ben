@@ -7,13 +7,34 @@ const defaults=[
  {id:3,name:'שחייה',icon:'🏊',color:'#2578d4',day:'שישי',time:'14:00',place:'הבריכה העירונית',reminder:'שעה'}
 ];
 let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||defaults;
-let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
+let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false,soundEnabled:true};
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
-let notificationTimers=[];
+let notificationTimers=[],audioContext=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
 function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))}
+function soundIsEnabled(){return profile.soundEnabled!==false}
+function unlockReminderSound(){
+ if(!soundIsEnabled())return;
+ const AudioContext=window.AudioContext||window.webkitAudioContext;
+ if(!AudioContext)return;
+ audioContext=audioContext||new AudioContext();
+ if(audioContext.state==='suspended')audioContext.resume();
+}
+function playReminderSound(){
+ if(!soundIsEnabled())return false;
+ unlockReminderSound();
+ if(!audioContext||audioContext.state!=='running')return false;
+ const start=audioContext.currentTime;
+ [659.25,783.99,1046.5].forEach((frequency,index)=>{
+  const oscillator=audioContext.createOscillator(),gain=audioContext.createGain(),noteStart=start+index*.14;
+  oscillator.type='sine';oscillator.frequency.value=frequency;
+  gain.gain.setValueAtTime(.0001,noteStart);gain.gain.exponentialRampToValueAtTime(.18,noteStart+.025);gain.gain.exponentialRampToValueAtTime(.0001,noteStart+.22);
+  oscillator.connect(gain);gain.connect(audioContext.destination);oscillator.start(noteStart);oscillator.stop(noteStart+.23);
+ });
+ return true;
+}
 function applyPreferences(){
  document.body.classList.toggle('large-text',Boolean(profile.largeText));
  document.body.classList.toggle('reduce-motion',Boolean(profile.reduceMotion));
@@ -30,6 +51,7 @@ function nextReminderDate(activity,now=new Date()){
 }
 function showActivityNotification(activity){
  if(!('Notification' in window)||Notification.permission!=='granted')return;
+ playReminderSound();
  const notification=new Notification(`${activity.icon} הגיע הזמן להתכונן ל${activity.name}!`,{body:`החוג מתחיל ב־${activity.time}${activity.place?` · ${activity.place}`:''}`,tag:`activity-${activity.id}`});
  notification.onclick=()=>{window.focus();notification.close()};
 }
@@ -47,6 +69,7 @@ function renderNotificationStatus(){
 }
 async function enableNotifications(){
  if(!('Notification' in window))return;
+ unlockReminderSound();
  const permission=await Notification.requestPermission();renderNotificationStatus();scheduleNotifications();toast(permission==='granted'?'ההתראות הופעלו בהצלחה 🔔':'לא ניתן להפעיל התראות. אפשר לשנות זאת בהגדרות הדפדפן');
 }
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
@@ -57,6 +80,7 @@ function render(){
  $('#userName').value=profile.name;
  $('#largeText').checked=Boolean(profile.largeText);
  $('#reduceMotion').checked=Boolean(profile.reduceMotion);
+ $('#soundEnabled').checked=soundIsEnabled();
  applyPreferences();
  renderNotificationStatus();
  const next=activities[0];
@@ -84,9 +108,11 @@ document.addEventListener('click',e=>{
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}
 $('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();scheduleNotifications();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
-$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
+$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked,soundEnabled:$('#soundEnabled').checked};saveProfile();if(soundIsEnabled())unlockReminderSound();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#settingsBtn').onclick=()=>go('settings');
 $('#enableNotifications').onclick=enableNotifications;
+$('#testSound').onclick=()=>{if(playReminderSound())toast('צליל התזכורת עובד 🔊');else toast('יש להפעיל את צליל התזכורת קודם')};
+document.addEventListener('pointerdown',unlockReminderSound,{once:true});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleNotifications()});
 setupChoices();render();scheduleNotifications();
