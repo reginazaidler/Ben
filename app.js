@@ -87,6 +87,23 @@ async function installApp(){
  if(outcome==='accepted')toast('האפליקציה הותקנה בהצלחה! ⭐');
 }
 
+function exportSiteData(){
+ const backup={version:3,exportedAt:new Date().toISOString(),activities,profile,favoriteFoods,customFoods};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));
+ const link=document.createElement('a');link.href=url;link.download='my-activities-backup.json';link.click();URL.revokeObjectURL(url);toast('הגיבוי הורד בהצלחה ✓');
+}
+async function importSiteData(file){
+ try{
+  const backup=JSON.parse(await file.text());
+  if(!Array.isArray(backup.activities)||!backup.profile||!Array.isArray(backup.customFoods))throw new Error('invalid backup');
+  activities=backup.activities;profile=backup.profile;favoriteFoods=Array.isArray(backup.favoriteFoods)?backup.favoriteFoods:[];customFoods=backup.customFoods;
+  save();saveProfile();saveFoods();render();scheduleNotifications();toast('כל נתוני האתר שוחזרו ✓');
+ }catch{toast('קובץ הגיבוי אינו תקין')}
+}
+function resetSiteData(){
+ activities=defaults.map(activity=>({...activity}));profile={name:'בן'};favoriteFoods=[];customFoods=[];
+ localStorage.removeItem('installPromptDismissed');save();saveProfile();saveFoods();render();scheduleNotifications();go('home');toast('האתר אופס בהצלחה');
+}
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
  $('#profileName').textContent=profile.name;
@@ -136,6 +153,11 @@ $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}enableNotifications()};
 $('#closeNotificationHelp').onclick=()=>$('#notificationHelpDialog').close();
+$('#exportSiteData').onclick=exportSiteData;
+$('#importSiteData').onchange=e=>{const [file]=e.target.files;if(file)importSiteData(file);e.target.value=''};
+$('#resetSiteData').onclick=()=>$('#resetSiteDialog').showModal();
+$('#cancelSiteReset').onclick=()=>$('#resetSiteDialog').close();
+$('#confirmSiteReset').onclick=()=>{$('#resetSiteDialog').close();resetSiteData()};
 $('#shareAppBtn').onclick=shareApp;
 $('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
 $('#installAppBtn').onclick=installApp;
