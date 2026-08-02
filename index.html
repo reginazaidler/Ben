@@ -21,7 +21,7 @@
   <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
   <main class="app-shell">
     <header class="topbar">
-      <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> ניהול האתר +</a>
+      <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> הגדרות</a>
       <div class="brand"><span class="brand-mark">★</span><strong data-site-text="brand">החוגים שלי</strong></div>
       <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span id="profileAvatar">👦🏻</span><b id="profileName">בן</b></div>
     </header>
@@ -84,7 +84,7 @@
     </section>
 
     <section class="page" id="settingsPage">
-      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>ניהול האתר</h1><p>ניהול הפרופיל, החוגים וההעדפות במכשיר הזה</p></div></div>
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>הגדרות</h1><p>הפרופיל, החוגים וההעדפות האישיות במכשיר הזה</p></div></div>
       <div class="settings-layout">
         <form class="form-card settings-card" id="settingsForm">
           <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
@@ -117,7 +117,7 @@
           <div class="settings-activities" id="settingsActivityList"></div>
         </section>
         <section class="form-card settings-card site-data-card" aria-labelledby="siteDataTitle">
-          <div class="settings-section-heading"><div><h2 id="siteDataTitle">ניהול כל נתוני האתר</h2><p>גיבוי, שחזור או איפוס של כל החוגים, המאכלים וההגדרות במכשיר הזה.</p></div><span class="owner-badge">מנהל האתר</span></div>
+          <div class="settings-section-heading"><div><h2 id="siteDataTitle">כל הנתונים שלי</h2><p>גיבוי, שחזור או איפוס של כל החוגים, המאכלים וההגדרות במכשיר הזה.</p></div></div>
           <button type="button" class="edit-site-copy" id="editSiteCopy">✏️ עריכת מילים באתר</button>
           <p class="edit-site-copy-help">לחצו על הכפתור, ואז לחצו על כל טקסט שמסומן באתר כדי לשנות אותו.</p>
           <div class="site-data-actions">
@@ -131,7 +131,7 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>ניהול</button></nav>
+  <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>הגדרות</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
   <dialog id="resetSiteDialog"><div class="dialog-icon">⚠️</div><h2>לאפס את האתר כולו?</h2><p>כל החוגים, המאכלים וההגדרות האישיות במכשיר הזה יימחקו. אי אפשר לבטל את הפעולה.</p><div><button type="button" id="cancelSiteReset">ביטול</button><button type="button" class="danger" id="confirmSiteReset">כן, איפוס מלא</button></div></dialog>
