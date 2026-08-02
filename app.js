@@ -12,8 +12,6 @@ let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||default
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן'};
 let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||[];
 let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
-let siteTexts=JSON.parse(localStorage.getItem('mySiteTexts')||'{}');
-let editingSiteCopy=false;
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
 let installPrompt=null;
@@ -23,8 +21,6 @@ function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
 function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))}
 function saveFoods(){localStorage.setItem('myFavoriteFoods',JSON.stringify(favoriteFoods));localStorage.setItem('myCustomFoods',JSON.stringify(customFoods))}
 function allFoods(){return customFoods}
-function applySiteTexts(){$$('[data-site-text]').forEach(element=>{const value=siteTexts[element.dataset.siteText];if(value)element.textContent=value})}
-function saveSiteText(element){const value=element.textContent.trim();if(!value){element.textContent=siteTexts[element.dataset.siteText]||element.dataset.originalText;return}siteTexts[element.dataset.siteText]=value;localStorage.setItem('mySiteTexts',JSON.stringify(siteTexts));toast('הטקסט נשמר לכל הכניסות מהמכשיר הזה ✓')}
 function renderFoods(){
  const choices=$('#foodChoices');if(!choices)return;
  const foods=allFoods();
@@ -91,26 +87,8 @@ async function installApp(){
  if(outcome==='accepted')toast('האפליקציה הותקנה בהצלחה! ⭐');
 }
 
-function exportSiteData(){
- const backup={version:2,exportedAt:new Date().toISOString(),activities,profile,favoriteFoods,customFoods,siteTexts};
- const url=URL.createObjectURL(new Blob([JSON.stringify(backup,null,2)],{type:'application/json'}));
- const link=document.createElement('a');link.href=url;link.download='my-activities-backup.json';link.click();URL.revokeObjectURL(url);toast('הגיבוי הורד בהצלחה ✓');
-}
-async function importSiteData(file){
- try{
-  const backup=JSON.parse(await file.text());
-  if(!Array.isArray(backup.activities)||!backup.profile||!Array.isArray(backup.customFoods))throw new Error('invalid backup');
-  activities=backup.activities;profile=backup.profile;favoriteFoods=Array.isArray(backup.favoriteFoods)?backup.favoriteFoods:[];customFoods=backup.customFoods;siteTexts=backup.siteTexts&&typeof backup.siteTexts==='object'?backup.siteTexts:{};
-  save();saveProfile();saveFoods();localStorage.setItem('mySiteTexts',JSON.stringify(siteTexts));render();scheduleNotifications();toast('כל נתוני האתר שוחזרו ✓');
- }catch{toast('קובץ הגיבוי אינו תקין')}
-}
-function resetSiteData(){
- activities=defaults.map(activity=>({...activity}));profile={name:'בן'};favoriteFoods=[];customFoods=[];siteTexts={};
- localStorage.removeItem('installPromptDismissed');localStorage.removeItem('mySiteTexts');save();saveProfile();saveFoods();render();scheduleNotifications();go('home');toast('האתר אופס בהצלחה');
-}
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
- applySiteTexts();
  $('#profileName').textContent=profile.name;
  $('#profileAvatar').textContent=avatars.includes(profile.avatar)?profile.avatar:avatars[0];
  $('#profileBadge').setAttribute('aria-label',`הפרופיל של ${profile.name}`);
@@ -143,7 +121,6 @@ function go(page,{updateHash=true}={}){const target=$(`#${page}Page`);if(!target
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),2200)}
 document.addEventListener('click',e=>{
  const goBtn=e.target.closest('[data-go]');if(goBtn){e.preventDefault();if(goBtn.dataset.go==='add')resetForm();go(goBtn.dataset.go)}
- if(editingSiteCopy){const editable=e.target.closest('[data-site-text]');if(editable){e.preventDefault();editable.focus();return}}
  const icon=e.target.closest('[data-icon]');if(icon){selectedIcon=icon.dataset.icon;setupChoices()}
  const color=e.target.closest('[data-color]');if(color){selectedColor=color.dataset.color;setupChoices()}
  const day=e.target.closest('[data-day]');if(day){selectedDay=day.dataset.day;setupChoices()}
@@ -159,14 +136,6 @@ $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}enableNotifications()};
 $('#closeNotificationHelp').onclick=()=>$('#notificationHelpDialog').close();
-$('#editSiteCopy').onclick=()=>{editingSiteCopy=true;document.body.classList.add('editing-site-copy');$$('[data-site-text]').forEach(element=>{element.dataset.originalText=element.textContent;element.contentEditable='true';element.setAttribute('role','textbox')});go('home');toast('מצב עריכה פעיל — לחצו על טקסט כדי לשנות אותו')};
-document.addEventListener('focusout',e=>{if(editingSiteCopy&&e.target.matches('[data-site-text]'))saveSiteText(e.target)});
-document.addEventListener('keydown',e=>{if(editingSiteCopy&&e.target.matches('[data-site-text]')&&e.key==='Enter'){e.preventDefault();e.target.blur()}});
-$('#exportSiteData').onclick=exportSiteData;
-$('#importSiteData').onchange=e=>{const [file]=e.target.files;if(file)importSiteData(file);e.target.value=''};
-$('#resetSiteData').onclick=()=>$('#resetSiteDialog').showModal();
-$('#cancelSiteReset').onclick=()=>$('#resetSiteDialog').close();
-$('#confirmSiteReset').onclick=()=>{$('#resetSiteDialog').close();resetSiteData()};
 $('#shareAppBtn').onclick=shareApp;
 $('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
 $('#installAppBtn').onclick=installApp;
