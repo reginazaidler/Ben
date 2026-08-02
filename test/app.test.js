@@ -30,10 +30,10 @@ test('settings page edits and locally persists the profile', () => {
   for (const id of ['exportSiteData', 'importSiteData', 'resetSiteData', 'resetSiteDialog']) assert.ok(html.includes(`id="${id}"`));
   assert.ok(html.includes('כל הנתונים שלי'));
   assert.ok(!html.includes('מנהל האתר'));
-  assert.ok(html.includes('id="editSiteCopy"'));
-  assert.ok(html.includes('data-site-text="welcome-title"'));
-  assert.match(js, /contentEditable='true'/);
-  assert.match(js, /localStorage\.setItem\('mySiteTexts'/);
+  assert.ok(!html.includes('id="editSiteCopy"'));
+  assert.ok(!html.includes('data-site-text'));
+  assert.doesNotMatch(js, /contentEditable='true'/);
+  assert.doesNotMatch(js, /mySiteTexts|siteTexts|editingSiteCopy/);
   assert.match(js, /function exportSiteData/);
   assert.match(js, /function importSiteData/);
   assert.match(js, /function resetSiteData/);

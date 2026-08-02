@@ -22,15 +22,16 @@
   <main class="app-shell">
     <header class="topbar">
       <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> הגדרות</a>
+      <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
       <div class="brand"><span class="brand-mark">★</span><strong data-site-text="brand">החוגים שלי</strong></div>
       <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span id="profileAvatar">👦🏻</span><b id="profileName">בן</b></div>
     </header>
 
     <section class="page active" id="homePage">
-      <div class="welcome"><div><p id="welcomeName">שלום בן! 👋</p><h1 data-site-text="welcome-title">איזה כיף לראות אותך!</h1><span data-site-text="welcome-subtitle">כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
+      <div class="welcome"><div><p id="welcomeName">שלום בן! 👋</p><h1>איזה כיף לראות אותך!</h1><span>כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
       <section class="share-card" aria-labelledby="shareTitle">
         <div class="share-illustration" aria-hidden="true">👫</div>
-        <div><h2 id="shareTitle" data-site-text="share-title">רוצה שגם החברים שלך ישתמשו?</h2><p data-site-text="share-description">שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
+        <div><h2 id="shareTitle">רוצה שגם החברים שלך ישתמשו?</h2><p>שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
         <button type="button" id="shareAppBtn"><span aria-hidden="true">↗</span> שיתוף עם חברים</button>
       </section>
       <section class="install-card" id="installCard" aria-labelledby="installTitle" hidden>
@@ -42,11 +43,11 @@
       <section class="next-card" id="nextCard"></section>
       <section class="food-promo" aria-labelledby="foodPromoTitle">
         <div class="food-promo-icon" aria-hidden="true">🍽️</div>
-        <div><h2 id="foodPromoTitle" data-site-text="food-title">המאכלים שאני אוהב</h2><p data-site-text="food-description">יוצרים רשימה אישית של המאכלים שאוהבים לאכול.</p></div>
+        <div><h2 id="foodPromoTitle">המאכלים שאני אוהב</h2><p>יוצרים רשימה אישית של המאכלים שאוהבים לאכול.</p></div>
         <button type="button" data-go="food">לרשימה שלי ←</button>
       </section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
-      <div class="section-title"><div><h2 data-site-text="activities-title">כל החוגים שלי</h2><p data-site-text="activities-description">הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
+      <div class="section-title"><div><h2>כל החוגים שלי</h2><p>הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
       <div class="activities" id="activityList"></div>
     </section>
 
