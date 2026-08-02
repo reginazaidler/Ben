@@ -1,6 +1,7 @@
 const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 const icons=['⚽','🏊','🎨','🎵','🥋','📚','🚲','⭐'];
 const colors=['#2578d4','#21a567','#ef5350','#f2bd35','#ef8c34','#8a5bd4','#e85c99'];
+const avatars=['👦🏻','👧🏻','🧒🏻','🦸','🦄','🐼'];
 const mealTypes=[{id:'breakfast',label:'ארוחת בוקר',icon:'🌅'},{id:'lunch',label:'ארוחת צהריים',icon:'☀️'},{id:'dinner',label:'ארוחת ערב',icon:'🌙'}];
 const defaults=[
  {id:1,name:'כדורגל',icon:'⚽',color:'#21a567',day:'שני',time:'17:00',place:'מגרש הספורט',reminder:'שעה'},
@@ -8,7 +9,7 @@ const defaults=[
  {id:3,name:'שחייה',icon:'🏊',color:'#2578d4',day:'שישי',time:'14:00',place:'הבריכה העירונית',reminder:'שעה'}
 ];
 let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||defaults;
-let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
+let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן'};
 let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||[];
 let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
 let siteTexts=JSON.parse(localStorage.getItem('mySiteTexts')||'{}');
@@ -33,6 +34,10 @@ function renderFoods(){
 function applyPreferences(){
  document.body.classList.toggle('large-text',Boolean(profile.largeText));
  document.body.classList.toggle('reduce-motion',Boolean(profile.reduceMotion));
+ document.body.classList.toggle('compact-cards',Boolean(profile.compactCards));
+ document.body.classList.toggle('hide-share-card',profile.showShareCard===false);
+ document.body.classList.toggle('hide-food-section',profile.showFoodSection===false);
+ document.body.dataset.theme=['green','purple'].includes(profile.themeColor)?profile.themeColor:'blue';
 }
 function reminderMinutes(reminder){return {'10 דקות':10,'30 דקות':30,'שעה':60,'שעתיים':120}[reminder]||0}
 function nextReminderDate(activity,now=new Date()){
@@ -100,18 +105,24 @@ async function importSiteData(file){
  }catch{toast('קובץ הגיבוי אינו תקין')}
 }
 function resetSiteData(){
- activities=defaults.map(activity=>({...activity}));profile={name:'בן',largeText:false,reduceMotion:false};favoriteFoods=[];customFoods=[];siteTexts={};
+ activities=defaults.map(activity=>({...activity}));profile={name:'בן'};favoriteFoods=[];customFoods=[];siteTexts={};
  localStorage.removeItem('installPromptDismissed');localStorage.removeItem('mySiteTexts');save();saveProfile();saveFoods();render();scheduleNotifications();go('home');toast('האתר אופס בהצלחה');
 }
 function escapeHtml(value){const el=document.createElement('div');el.textContent=String(value);return el.innerHTML}
 function render(){
  applySiteTexts();
  $('#profileName').textContent=profile.name;
+ $('#profileAvatar').textContent=avatars.includes(profile.avatar)?profile.avatar:avatars[0];
  $('#profileBadge').setAttribute('aria-label',`הפרופיל של ${profile.name}`);
  $('#welcomeName').textContent=`שלום ${profile.name}! 👋`;
  $('#userName').value=profile.name;
  $('#largeText').checked=Boolean(profile.largeText);
  $('#reduceMotion').checked=Boolean(profile.reduceMotion);
+ $('#compactCards').checked=Boolean(profile.compactCards);
+ $('#showShareCard').checked=profile.showShareCard!==false;
+ $('#showFoodSection').checked=profile.showFoodSection!==false;
+ $('#themeColor').value=['green','purple'].includes(profile.themeColor)?profile.themeColor:'blue';
+ $$('#avatarChoices button').forEach(button=>{const selected=button.dataset.avatar===(avatars.includes(profile.avatar)?profile.avatar:avatars[0]);button.classList.toggle('selected',selected);button.setAttribute('aria-checked',selected)});
  applyPreferences();
  renderNotificationStatus();
  const next=activities[0];
@@ -126,6 +137,7 @@ function setupChoices(){
  $('#iconChoices').innerHTML=icons.map(x=>`<button type="button" class="choice ${x===selectedIcon?'selected':''}" data-icon="${x}">${x}</button>`).join('');
  $('#colorChoices').innerHTML=colors.map(x=>`<button type="button" aria-label="בחירת צבע" class="color ${x===selectedColor?'selected':''}" style="background:${x}" data-color="${x}"></button>`).join('');
  $('#dayChoices').innerHTML=days.map(x=>`<button type="button" class="choice ${x===selectedDay?'selected':''}" data-day="${x}">${x}</button>`).join('');
+ $('#avatarChoices').innerHTML=avatars.map(x=>`<button type="button" class="avatar-choice" data-avatar="${x}" role="radio" aria-checked="false" aria-label="דמות ${x}">${x}</button>`).join('');
 }
 function go(page,{updateHash=true}={}){const target=$(`#${page}Page`);if(!target)return;$$('.page').forEach(p=>p.classList.remove('active'));target.classList.add('active');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===page));if(updateHash)history.replaceState(null,'',page==='home'?`${location.pathname}${location.search}`:`#${page}`);scrollTo({top:0,behavior:profile.reduceMotion?'auto':'smooth'})}
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),2200)}
@@ -135,6 +147,7 @@ document.addEventListener('click',e=>{
  const icon=e.target.closest('[data-icon]');if(icon){selectedIcon=icon.dataset.icon;setupChoices()}
  const color=e.target.closest('[data-color]');if(color){selectedColor=color.dataset.color;setupChoices()}
  const day=e.target.closest('[data-day]');if(day){selectedDay=day.dataset.day;setupChoices()}
+ const avatar=e.target.closest('[data-avatar]');if(avatar){$$('#avatarChoices button').forEach(button=>{const selected=button===avatar;button.classList.toggle('selected',selected);button.setAttribute('aria-checked',selected)});profile.avatar=avatar.dataset.avatar}
  const edit=e.target.closest('[data-edit]');if(edit){openEdit(Number(edit.dataset.edit))}
  const del=e.target.closest('[data-delete]');if(del){deleteId=Number(del.dataset.delete);const a=activities.find(x=>x.id===deleteId);$('#deleteText').textContent=`אתה בטוח שאתה רוצה למחוק את חוג ${a.name}?`;$('#deleteDialog').showModal()}
  const food=e.target.closest('[data-food-id]');if(food){const id=food.dataset.foodId;customFoods=customFoods.filter(item=>item.id!==id);favoriteFoods=favoriteFoods.filter(item=>item!==id);saveFoods();renderFoods();toast('המאכל הוסר מהרשימה')}
@@ -142,7 +155,7 @@ document.addEventListener('click',e=>{
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}
 $('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();scheduleNotifications();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
-$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
+$('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,avatar:avatars.includes(profile.avatar)?profile.avatar:avatars[0],themeColor:$('#themeColor').value,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked,compactCards:$('#compactCards').checked,showShareCard:$('#showShareCard').checked,showFoodSection:$('#showFoodSection').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
 $('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}enableNotifications()};
 $('#closeNotificationHelp').onclick=()=>$('#notificationHelpDialog').close();

@@ -47,6 +47,10 @@ test('settings page edits and locally persists the profile', () => {
   assert.ok(html.includes('id="reduceMotion"'));
   assert.match(js, /applyPreferences/);
   assert.match(js, /largeText:\$\('#largeText'\)\.checked/);
+  for (const id of ['avatarChoices', 'themeColor', 'compactCards', 'showShareCard', 'showFoodSection']) assert.ok(html.includes(`id="${id}"`));
+  assert.match(js, /document\.body\.dataset\.theme/);
+  assert.match(js, /compactCards:\$\('#compactCards'\)\.checked/);
+  assert.match(js, /showFoodSection:\$\('#showFoodSection'\)\.checked/);
 });
 
 test('notification controls request permission and schedule activity reminders', () => {
