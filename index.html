@@ -21,7 +21,7 @@
   <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
   <main class="app-shell">
     <header class="topbar">
-      <button class="icon-button" id="settingsBtn" aria-label="הגדרות">⚙️</button>
+      <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> ההגדרות שלי</a>
       <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
       <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span>👦🏻</span><b id="profileName">בן</b></div>
     </header>
@@ -84,7 +84,7 @@
     </section>
 
     <section class="page" id="settingsPage">
-      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>הגדרות</h1><p>הפרטים שלך נשמרים במכשיר הזה בלבד</p></div></div>
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>ההגדרות שלי</h1><p>הפרטים וההעדפות האישיים שלך במכשיר הזה</p></div></div>
       <div class="settings-layout">
         <form class="form-card settings-card" id="settingsForm">
           <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
@@ -109,9 +109,10 @@
     </section>
   </main>
 
-  <nav class="bottom-nav"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button></nav>
+  <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>הגדרות</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
+  <dialog id="notificationHelpDialog" class="notification-help-dialog"><div class="dialog-icon">🔔</div><h2>איך מאפשרים התראות?</h2><ol><li>לחצו על סמל המנעול או ההגדרות ליד כתובת האתר.</li><li>בחרו <b>הגדרות אתר</b> או <b>הרשאות לאתר הזה</b>.</li><li>ליד <b>התראות</b> בחרו <b>אפשר</b>.</li><li>חזרו לכאן ורעננו את הדף.</li></ol><p>הדפדפן לא מאפשר לאתר לפתוח את מסך ההרשאות בעצמו, לכן השינוי נעשה ליד שורת הכתובת.</p><button type="button" id="closeNotificationHelp">הבנתי</button></dialog>
   <script src="app.js"></script>
 </body>
 </html>

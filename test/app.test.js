@@ -23,9 +23,15 @@ test('settings page edits and locally persists the profile', () => {
   assert.ok(html.includes('id="settingsPage"'));
   assert.ok(html.includes('id="settingsForm"'));
   assert.ok(html.includes('id="settingsActivityList"'));
+  assert.ok(html.includes('id="settingsBtn" href="#settings" data-go="settings"'));
+  assert.ok(html.includes('ההגדרות שלי'));
+  assert.ok(html.includes('הפרטים וההעדפות האישיים שלך במכשיר הזה'));
+  assert.ok(!html.includes('ניהול האתר'));
+  assert.ok(html.includes('data-go="settings"><span>⚙️</span>הגדרות'));
+  assert.ok(!html.includes('class="home-settings-link"'));
+  assert.match(js, /location\.hash===['"]#settings['"]/);
   assert.match(js, /localStorage\.setItem\('myProfile'/);
   assert.match(js, /settingsForm.*addEventListener\('submit'/);
-  assert.match(js, /settingsBtn.*go\('settings'\)/);
   assert.ok(html.includes('id="largeText"'));
   assert.ok(html.includes('id="reduceMotion"'));
   assert.match(js, /applyPreferences/);
@@ -37,7 +43,11 @@ test('notification controls request permission and schedule activity reminders',
   const js = fs.readFileSync('app.js', 'utf8');
   assert.ok(html.includes('id="enableNotifications"'));
   assert.ok(html.includes('id="notificationStatus"'));
+  assert.ok(html.includes('id="notificationHelpDialog"'));
+  assert.ok(html.includes('הגדרות אתר'));
+  assert.ok(html.includes('ליד כתובת האתר'));
   assert.match(js, /Notification\.requestPermission\(\)/);
+  assert.match(js, /Notification.permission==='denied'.*notificationHelpDialog/);
   assert.match(js, /function nextReminderDate/);
   assert.match(js, /function scheduleNotifications/);
   assert.match(js, /new Notification/);
