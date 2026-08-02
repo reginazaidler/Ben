@@ -23,6 +23,7 @@
     <header class="topbar">
       <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> הגדרות</a>
       <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
+      <div class="brand"><span class="brand-mark">★</span><strong data-site-text="brand">החוגים שלי</strong></div>
       <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span id="profileAvatar">👦🏻</span><b id="profileName">בן</b></div>
     </header>
 
@@ -118,6 +119,8 @@
         </section>
         <section class="form-card settings-card site-data-card" aria-labelledby="siteDataTitle">
           <div class="settings-section-heading"><div><h2 id="siteDataTitle">כל הנתונים שלי</h2><p>גיבוי, שחזור או איפוס של כל החוגים, המאכלים וההגדרות במכשיר הזה.</p></div></div>
+          <button type="button" class="edit-site-copy" id="editSiteCopy">✏️ עריכת מילים באתר</button>
+          <p class="edit-site-copy-help">לחצו על הכפתור, ואז לחצו על כל טקסט שמסומן באתר כדי לשנות אותו.</p>
           <div class="site-data-actions">
             <button type="button" id="exportSiteData">⬇️ הורדת גיבוי</button>
             <label class="import-site-data" for="importSiteData">⬆️ שחזור מגיבוי<input id="importSiteData" type="file" accept="application/json,.json" /></label>
