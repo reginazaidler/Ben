@@ -55,7 +55,7 @@ function renderNotificationStatus(){
  const status=$('#notificationStatus'),button=$('#enableNotifications');if(!status||!button)return;
  if(!('Notification' in window)){status.textContent='הדפדפן הזה לא תומך בהתראות';button.disabled=true;return}
  const messages={granted:'ההתראות פעילות כל עוד האפליקציה פתוחה',denied:'ההתראות חסומות בהגדרות הדפדפן',default:'כדי לקבל תזכורת, צריך לאשר התראות'};
- status.textContent=messages[Notification.permission];button.disabled=Notification.permission!=='default';button.textContent=Notification.permission==='granted'?'ההתראות פעילות':Notification.permission==='denied'?'ההתראות חסומות':'הפעלת התראות';
+ status.textContent=messages[Notification.permission];button.disabled=Notification.permission==='granted';button.textContent=Notification.permission==='granted'?'ההתראות פעילות':Notification.permission==='denied'?'איך לאפשר התראות?':'הפעלת התראות';
 }
 async function enableNotifications(){
  if(!('Notification' in window))return;
@@ -104,7 +104,7 @@ function setupChoices(){
  $('#colorChoices').innerHTML=colors.map(x=>`<button type="button" aria-label="בחירת צבע" class="color ${x===selectedColor?'selected':''}" style="background:${x}" data-color="${x}"></button>`).join('');
  $('#dayChoices').innerHTML=days.map(x=>`<button type="button" class="choice ${x===selectedDay?'selected':''}" data-day="${x}">${x}</button>`).join('');
 }
-function go(page){$$('.page').forEach(p=>p.classList.remove('active'));$(`#${page}Page`).classList.add('active');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===page));scrollTo({top:0,behavior:profile.reduceMotion?'auto':'smooth'})}
+function go(page,{updateHash=true}={}){const target=$(`#${page}Page`);if(!target)return;$$('.page').forEach(p=>p.classList.remove('active'));target.classList.add('active');$$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===page));if(updateHash)history.replaceState(null,'',page==='home'?`${location.pathname}${location.search}`:`#${page}`);scrollTo({top:0,behavior:profile.reduceMotion?'auto':'smooth'})}
 function toast(text){$('#toast').textContent=text;$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),2200)}
 document.addEventListener('click',e=>{
  const goBtn=e.target.closest('[data-go]');if(goBtn){if(goBtn.dataset.go==='add')resetForm();go(goBtn.dataset.go)}
@@ -120,8 +120,8 @@ function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=i
 $('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();scheduleNotifications();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
 $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
-$('#settingsBtn').onclick=()=>go('settings');
-$('#enableNotifications').onclick=enableNotifications;
+$('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}enableNotifications()};
+$('#closeNotificationHelp').onclick=()=>$('#notificationHelpDialog').close();
 $('#shareAppBtn').onclick=shareApp;
 $('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
 $('#installAppBtn').onclick=installApp;
@@ -131,4 +131,6 @@ window.addEventListener('appinstalled',()=>{installPrompt=null;$('#installCard')
 if(window.matchMedia('(display-mode: standalone)').matches)document.body.classList.add('standalone');
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleNotifications()});
 setupChoices();render();scheduleNotifications();
+const initialPage=location.hash==='#settings'?'settings':'home';if(initialPage!=='home')go(initialPage,{updateHash:false});
+window.addEventListener('hashchange',()=>go(location.hash==='#settings'?'settings':'home',{updateHash:false}));
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
