@@ -2,11 +2,6 @@ const days=['ראשון','שני','שלישי','רביעי','חמישי','שיש
 const icons=['⚽','🏊','🎨','🎵','🥋','📚','🚲','⭐'];
 const colors=['#2578d4','#21a567','#ef5350','#f2bd35','#ef8c34','#8a5bd4','#e85c99'];
 const mealTypes=[{id:'breakfast',label:'ארוחת בוקר',icon:'🌅'},{id:'lunch',label:'ארוחת צהריים',icon:'☀️'},{id:'dinner',label:'ארוחת ערב',icon:'🌙'}];
-const foodCatalog=[
- {id:'cereal',name:'קורנפלקס עם חלב',emoji:'🥣',meal:'breakfast'}, {id:'omelet',name:'חביתה וירקות',emoji:'🍳',meal:'breakfast'}, {id:'yogurt',name:'יוגורט ופירות',emoji:'🍓',meal:'breakfast'}, {id:'toast',name:'טוסט גבינה',emoji:'🥪',meal:'breakfast'},
- {id:'pasta',name:'פסטה ברוטב עגבניות',emoji:'🍝',meal:'lunch'}, {id:'schnitzel',name:'שניצל ואורז',emoji:'🍗',meal:'lunch'}, {id:'pizza',name:'פיצה',emoji:'🍕',meal:'lunch'}, {id:'meatballs',name:'קציצות ופירה',emoji:'🧆',meal:'lunch'},
- {id:'salad',name:'סלט וטוסט',emoji:'🥗',meal:'dinner'}, {id:'pancakes',name:'פנקייק',emoji:'🥞',meal:'dinner'}, {id:'soup',name:'מרק חם',emoji:'🍲',meal:'dinner'}, {id:'sandwich',name:'כריך וירקות',emoji:'🥪',meal:'dinner'}
-];
 const defaults=[
  {id:1,name:'כדורגל',icon:'⚽',color:'#21a567',day:'שני',time:'17:00',place:'מגרש הספורט',reminder:'שעה'},
  {id:2,name:'ציור',icon:'🎨',color:'#8a5bd4',day:'רביעי',time:'18:30',place:'מרכז האומנויות',reminder:'30 דקות'},
@@ -14,7 +9,7 @@ const defaults=[
 ];
 let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||defaults;
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
-let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||['omelet','yogurt','pasta','schnitzel','salad','soup'];
+let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||[];
 let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
@@ -24,11 +19,12 @@ function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
 function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))}
 function saveFoods(){localStorage.setItem('myFavoriteFoods',JSON.stringify(favoriteFoods));localStorage.setItem('myCustomFoods',JSON.stringify(customFoods))}
-function allFoods(){return [...foodCatalog,...customFoods]}
+function allFoods(){return customFoods}
 function renderFoods(){
  const choices=$('#foodChoices');if(!choices)return;
- choices.innerHTML=mealTypes.map(type=>`<section class="food-group"><h3>${type.icon} ${type.label}</h3><div>${allFoods().filter(food=>food.meal===type.id).map(food=>`<button type="button" class="food-choice ${favoriteFoods.includes(food.id)?'selected':''}" data-food-id="${food.id}" aria-pressed="${favoriteFoods.includes(food.id)}"><span>${food.emoji}</span>${escapeHtml(food.name)}<b>${favoriteFoods.includes(food.id)?'✓':'＋'}</b></button>`).join('')}</div></section>`).join('');
- $('#foodCount').textContent=`${favoriteFoods.length} מאכלים ברשימה`;
+ const foods=allFoods();
+ choices.innerHTML=foods.length?mealTypes.map(type=>`<section class="food-group"><h3>${type.icon} ${type.label}</h3><div>${foods.filter(food=>food.meal===type.id).map(food=>`<button type="button" class="food-choice selected" data-food-id="${food.id}" aria-pressed="true"><span>${food.emoji}</span>${escapeHtml(food.name)}<b>✓</b></button>`).join('')}</div></section>`).join(''):'<div class="food-empty">עוד לא הוספת מאכלים. אפשר להתחיל מהטופס למטה 🍽️</div>';
+ $('#foodCount').textContent=`${foods.length} מאכלים ברשימה`;
 }
 function applyPreferences(){
  document.body.classList.toggle('large-text',Boolean(profile.largeText));
@@ -117,7 +113,7 @@ document.addEventListener('click',e=>{
  const day=e.target.closest('[data-day]');if(day){selectedDay=day.dataset.day;setupChoices()}
  const edit=e.target.closest('[data-edit]');if(edit){openEdit(Number(edit.dataset.edit))}
  const del=e.target.closest('[data-delete]');if(del){deleteId=Number(del.dataset.delete);const a=activities.find(x=>x.id===deleteId);$('#deleteText').textContent=`אתה בטוח שאתה רוצה למחוק את חוג ${a.name}?`;$('#deleteDialog').showModal()}
- const food=e.target.closest('[data-food-id]');if(food){const id=food.dataset.foodId;favoriteFoods=favoriteFoods.includes(id)?favoriteFoods.filter(item=>item!==id):[...favoriteFoods,id];saveFoods();renderFoods()}
+ const food=e.target.closest('[data-food-id]');if(food){const id=food.dataset.foodId;customFoods=customFoods.filter(item=>item.id!==id);favoriteFoods=favoriteFoods.filter(item=>item!==id);saveFoods();renderFoods();toast('המאכל הוסר מהרשימה')}
 });
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}

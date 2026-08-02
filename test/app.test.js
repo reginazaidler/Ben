@@ -81,4 +81,7 @@ test('food list stores favorites for breakfast, lunch, and dinner without sugges
   assert.ok(!html.includes('id="shuffleAllMeals"'));
   assert.doesNotMatch(js, /function suggestedFood/);
   assert.doesNotMatch(js, /data-shuffle-meal/);
+  assert.doesNotMatch(js, /foodCatalog/);
+  for (const suggestion of ['קורנפלקס עם חלב', 'חביתה וירקות', 'פסטה ברוטב עגבניות', 'פיצה']) assert.ok(!js.includes(suggestion));
+  assert.ok(html.includes('כאן מופיעים רק המאכלים שהוספת בעצמך'));
 });
