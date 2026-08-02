@@ -21,16 +21,16 @@
   <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
   <main class="app-shell">
     <header class="topbar">
-      <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> ניהול האתר +</a>
-      <div class="brand"><span class="brand-mark">★</span><strong data-site-text="brand">החוגים שלי</strong></div>
+      <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> הגדרות</a>
+      <div class="brand"><span class="brand-mark">★</span><strong>החוגים שלי</strong></div>
       <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span id="profileAvatar">👦🏻</span><b id="profileName">בן</b></div>
     </header>
 
     <section class="page active" id="homePage">
-      <div class="welcome"><div><p id="welcomeName">שלום בן! 👋</p><h1 data-site-text="welcome-title">איזה כיף לראות אותך!</h1><span data-site-text="welcome-subtitle">כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
+      <div class="welcome"><div><p id="welcomeName">שלום בן! 👋</p><h1>איזה כיף לראות אותך!</h1><span>כאן מחכים לך כל החוגים שלך</span></div><div class="sun">☀️</div></div>
       <section class="share-card" aria-labelledby="shareTitle">
         <div class="share-illustration" aria-hidden="true">👫</div>
-        <div><h2 id="shareTitle" data-site-text="share-title">רוצה שגם החברים שלך ישתמשו?</h2><p data-site-text="share-description">שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
+        <div><h2 id="shareTitle">רוצה שגם החברים שלך ישתמשו?</h2><p>שלחו להם קישור, וכל אחד יוכל ליצור את לוח החוגים האישי שלו.</p><small class="share-storage-note">🔒 החוגים והשם של כל חבר נשמרים רק בדפדפן ובמכשיר שלו — לא אצלך ולא בענן.</small></div>
         <button type="button" id="shareAppBtn"><span aria-hidden="true">↗</span> שיתוף עם חברים</button>
       </section>
       <section class="install-card" id="installCard" aria-labelledby="installTitle" hidden>
@@ -42,11 +42,11 @@
       <section class="next-card" id="nextCard"></section>
       <section class="food-promo" aria-labelledby="foodPromoTitle">
         <div class="food-promo-icon" aria-hidden="true">🍽️</div>
-        <div><h2 id="foodPromoTitle" data-site-text="food-title">המאכלים שאני אוהב</h2><p data-site-text="food-description">יוצרים רשימה אישית של המאכלים שאוהבים לאכול.</p></div>
+        <div><h2 id="foodPromoTitle">המאכלים שאני אוהב</h2><p>יוצרים רשימה אישית של המאכלים שאוהבים לאכול.</p></div>
         <button type="button" data-go="food">לרשימה שלי ←</button>
       </section>
       <button class="add-button" data-go="add"><span>＋</span><b>הוספת חוג חדש</b><small>בואו נוסיף משהו כיפי!</small></button>
-      <div class="section-title"><div><h2 data-site-text="activities-title">כל החוגים שלי</h2><p data-site-text="activities-description">הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
+      <div class="section-title"><div><h2>כל החוגים שלי</h2><p>הפעילויות שהופכות את השבוע למיוחד</p></div><button class="week-link" data-go="week">השבוע שלי ←</button></div>
       <div class="activities" id="activityList"></div>
     </section>
 
@@ -84,7 +84,7 @@
     </section>
 
     <section class="page" id="settingsPage">
-      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>ניהול האתר</h1><p>ניהול הפרופיל, החוגים וההעדפות במכשיר הזה</p></div></div>
+      <div class="page-heading"><button class="back" data-go="home">→</button><div><h1>הגדרות</h1><p>הפרופיל, החוגים וההעדפות האישיות במכשיר הזה</p></div></div>
       <div class="settings-layout">
         <form class="form-card settings-card" id="settingsForm">
           <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
@@ -117,9 +117,7 @@
           <div class="settings-activities" id="settingsActivityList"></div>
         </section>
         <section class="form-card settings-card site-data-card" aria-labelledby="siteDataTitle">
-          <div class="settings-section-heading"><div><h2 id="siteDataTitle">ניהול כל נתוני האתר</h2><p>גיבוי, שחזור או איפוס של כל החוגים, המאכלים וההגדרות במכשיר הזה.</p></div><span class="owner-badge">מנהל האתר</span></div>
-          <button type="button" class="edit-site-copy" id="editSiteCopy">✏️ עריכת מילים באתר</button>
-          <p class="edit-site-copy-help">לחצו על הכפתור, ואז לחצו על כל טקסט שמסומן באתר כדי לשנות אותו.</p>
+          <div class="settings-section-heading"><div><h2 id="siteDataTitle">כל הנתונים שלי</h2><p>גיבוי, שחזור או איפוס של כל החוגים, המאכלים וההגדרות במכשיר הזה.</p></div></div>
           <div class="site-data-actions">
             <button type="button" id="exportSiteData">⬇️ הורדת גיבוי</button>
             <label class="import-site-data" for="importSiteData">⬆️ שחזור מגיבוי<input id="importSiteData" type="file" accept="application/json,.json" /></label>
@@ -131,7 +129,7 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>ניהול</button></nav>
+  <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>הגדרות</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
   <dialog id="resetSiteDialog"><div class="dialog-icon">⚠️</div><h2>לאפס את האתר כולו?</h2><p>כל החוגים, המאכלים וההגדרות האישיות במכשיר הזה יימחקו. אי אפשר לבטל את הפעולה.</p><div><button type="button" id="cancelSiteReset">ביטול</button><button type="button" class="danger" id="confirmSiteReset">כן, איפוס מלא</button></div></dialog>
