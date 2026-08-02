@@ -23,7 +23,7 @@
     <header class="topbar">
       <a class="settings-link" id="settingsBtn" href="#settings" data-go="settings"><span aria-hidden="true">⚙️</span> ניהול האתר +</a>
       <div class="brand"><span class="brand-mark">★</span><strong data-site-text="brand">החוגים שלי</strong></div>
-      <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span>👦🏻</span><b id="profileName">בן</b></div>
+      <div class="profile" id="profileBadge" aria-label="הפרופיל של בן"><span id="profileAvatar">👦🏻</span><b id="profileName">בן</b></div>
     </header>
 
     <section class="page active" id="homePage">
@@ -89,10 +89,21 @@
         <form class="form-card settings-card" id="settingsForm">
           <div class="settings-icon" aria-hidden="true">👦🏻</div><h2>הפרופיל שלי</h2>
           <label for="userName">איך קוראים לך?<input id="userName" name="userName" required maxlength="30" autocomplete="name" placeholder="השם שלך" /></label>
+          <fieldset>
+            <legend>בחירת דמות</legend>
+            <div class="avatar-choices" id="avatarChoices" role="radiogroup" aria-label="בחירת דמות לפרופיל"></div>
+          </fieldset>
+          <label for="themeColor">צבע האתר<select id="themeColor" name="themeColor"><option value="blue">כחול שמיים</option><option value="green">ירוק רענן</option><option value="purple">סגול קסום</option></select></label>
           <fieldset class="preference-list">
             <legend>העדפות תצוגה</legend>
             <label class="toggle-row" for="largeText"><span><b>טקסט גדול</b><small>מגדיל את הטקסט כדי שיהיה קל יותר לקרוא</small></span><input id="largeText" name="largeText" type="checkbox" role="switch" /></label>
             <label class="toggle-row" for="reduceMotion"><span><b>פחות תנועה</b><small>מבטל גלילה ואנימציות במסכים</small></span><input id="reduceMotion" name="reduceMotion" type="checkbox" role="switch" /></label>
+            <label class="toggle-row" for="compactCards"><span><b>כרטיסים קומפקטיים</b><small>מציג יותר חוגים על המסך בבת אחת</small></span><input id="compactCards" name="compactCards" type="checkbox" role="switch" /></label>
+          </fieldset>
+          <fieldset class="preference-list">
+            <legend>מה יופיע בעמוד הבית?</legend>
+            <label class="toggle-row" for="showShareCard"><span><b>הזמנה לחברים</b><small>הצגת כרטיס השיתוף עם חברים</small></span><input id="showShareCard" name="showShareCard" type="checkbox" role="switch" /></label>
+            <label class="toggle-row" for="showFoodSection"><span><b>רשימת המאכלים</b><small>הצגת אזור האוכל בבית ובתפריט</small></span><input id="showFoodSection" name="showFoodSection" type="checkbox" role="switch" /></label>
           </fieldset>
           <section class="notification-settings" aria-labelledby="notificationTitle">
             <div><b id="notificationTitle">🔔 התראות לחוגים</b><small id="notificationStatus">בודקים אם אפשר להציג התראות…</small></div>
