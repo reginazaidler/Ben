@@ -113,8 +113,8 @@
           <button class="save-button" type="submit">✓ שמירת השינויים</button>
           <p class="local-note">🔒 השם והחוגים נשמרים באופן מקומי בדפדפן ולא נשלחים לאינטרנט.</p>
         </form>
-        <section class="form-card settings-card" aria-labelledby="manageTitle">
-          <div class="settings-section-heading"><div><h2 id="manageTitle">החוגים שלי</h2><p>אפשר לערוך או למחוק חוג שכבר שמרת.</p></div><a class="small-add" id="manageAddBtn" href="#add" data-go="add">＋ הוספת חוג</a></div>
+        <section class="form-card settings-card" aria-labelledby="personalActivitiesTitle">
+          <div class="settings-section-heading"><div><h2 id="personalActivitiesTitle">החוגים שלי</h2><p>אפשר לערוך או למחוק חוג שכבר שמרת.</p></div><a class="small-add" id="settingsAddBtn" href="#add" data-go="add">＋ הוספת חוג</a></div>
           <div class="settings-activities" id="settingsActivityList"></div>
         </section>
         <section class="form-card settings-card site-data-card" aria-labelledby="siteDataTitle">
@@ -135,7 +135,6 @@
   <nav class="bottom-nav" aria-label="ניווט ראשי"><button data-go="home" class="active"><span>⌂</span>בית</button><button data-go="food"><span>🍽️</span>האוכל שלי</button><button data-go="add"><span class="nav-plus">＋</span>הוסף חוג</button><button data-go="week"><span>▦</span>השבוע שלי</button><button data-go="settings"><span>⚙️</span>הגדרות</button></nav>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="deleteDialog"><div class="dialog-icon">🗑️</div><h2>למחוק את החוג?</h2><p id="deleteText"></p><div><button id="cancelDelete">לא, חזור</button><button class="danger" id="confirmDelete">כן, מחק</button></div></dialog>
-  <dialog id="resetSiteDialog"><div class="dialog-icon">⚠️</div><h2>לאפס את האתר כולו?</h2><p>כל החוגים, המאכלים וההגדרות האישיות במכשיר הזה יימחקו. אי אפשר לבטל את הפעולה.</p><div><button type="button" id="cancelSiteReset">ביטול</button><button type="button" class="danger" id="confirmSiteReset">כן, איפוס מלא</button></div></dialog>
   <dialog id="notificationHelpDialog" class="notification-help-dialog"><div class="dialog-icon">🔔</div><h2>איך מאפשרים התראות?</h2><ol><li>לחצו על סמל המנעול או ההגדרות ליד כתובת האתר.</li><li>בחרו <b>הגדרות אתר</b> או <b>הרשאות לאתר הזה</b>.</li><li>ליד <b>התראות</b> בחרו <b>אפשר</b>.</li><li>חזרו לכאן ורעננו את הדף.</li></ol><p>הדפדפן לא מאפשר לאתר לפתוח את מסך ההרשאות בעצמו, לכן השינוי נעשה ליד שורת הכתובת.</p><button type="button" id="closeNotificationHelp">הבנתי</button></dialog>
   <script src="app.js"></script>
 </body>
