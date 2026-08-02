@@ -1,6 +1,7 @@
 const days=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 const icons=['⚽','🏊','🎨','🎵','🥋','📚','🚲','⭐'];
 const colors=['#2578d4','#21a567','#ef5350','#f2bd35','#ef8c34','#8a5bd4','#e85c99'];
+const mealTypes=[{id:'breakfast',label:'ארוחת בוקר',icon:'🌅'},{id:'lunch',label:'ארוחת צהריים',icon:'☀️'},{id:'dinner',label:'ארוחת ערב',icon:'🌙'}];
 const defaults=[
  {id:1,name:'כדורגל',icon:'⚽',color:'#21a567',day:'שני',time:'17:00',place:'מגרש הספורט',reminder:'שעה'},
  {id:2,name:'ציור',icon:'🎨',color:'#8a5bd4',day:'רביעי',time:'18:30',place:'מרכז האומנויות',reminder:'30 דקות'},
@@ -8,6 +9,8 @@ const defaults=[
 ];
 let activities=JSON.parse(localStorage.getItem('myActivities')||'null')||defaults;
 let profile=JSON.parse(localStorage.getItem('myProfile')||'null')||{name:'בן',largeText:false,reduceMotion:false};
+let favoriteFoods=JSON.parse(localStorage.getItem('myFavoriteFoods')||'null')||[];
+let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
 let installPrompt=null;
@@ -15,6 +18,14 @@ const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
 function saveProfile(){localStorage.setItem('myProfile',JSON.stringify(profile))}
+function saveFoods(){localStorage.setItem('myFavoriteFoods',JSON.stringify(favoriteFoods));localStorage.setItem('myCustomFoods',JSON.stringify(customFoods))}
+function allFoods(){return customFoods}
+function renderFoods(){
+ const choices=$('#foodChoices');if(!choices)return;
+ const foods=allFoods();
+ choices.innerHTML=foods.length?mealTypes.map(type=>`<section class="food-group"><h3>${type.icon} ${type.label}</h3><div>${foods.filter(food=>food.meal===type.id).map(food=>`<button type="button" class="food-choice selected" data-food-id="${food.id}" aria-pressed="true"><span>${food.emoji}</span>${escapeHtml(food.name)}<b>✓</b></button>`).join('')}</div></section>`).join(''):'<div class="food-empty">עוד לא הוספת מאכלים. אפשר להתחיל מהטופס למטה 🍽️</div>';
+ $('#foodCount').textContent=`${foods.length} מאכלים ברשימה`;
+}
 function applyPreferences(){
  document.body.classList.toggle('large-text',Boolean(profile.largeText));
  document.body.classList.toggle('reduce-motion',Boolean(profile.reduceMotion));
@@ -86,6 +97,7 @@ function render(){
  $('#activityList').innerHTML=activities.map(a=>`<article class="activity-card" style="--accent:${a.color};--soft:${soft(a.color)}"><div class="activity-head"><div class="activity-icon">${a.icon}</div><div><h3>${a.name}</h3><span>יום ${a.day} • ${a.time}</span></div></div><div class="meta">📍 ${a.place||'ללא מקום'}<br>🔔 תזכורת ${a.reminder} לפני</div><div class="card-actions"><button class="edit" data-edit="${a.id}">✏️ ערוך</button><button class="delete" data-delete="${a.id}">🗑️ מחק</button></div></article>`).join('');
  $('#settingsActivityList').innerHTML=activities.length?activities.map(a=>`<div class="settings-activity"><span class="settings-activity-icon" style="--soft:${soft(a.color)}">${a.icon}</span><div><b>${escapeHtml(a.name)}</b><small>יום ${a.day} בשעה ${a.time}</small></div><div class="settings-actions"><button class="edit" data-edit="${a.id}">✏️ עריכה</button><button class="delete" data-delete="${a.id}" aria-label="מחיקת ${escapeHtml(a.name)}">🗑️</button></div></div>`).join(' '):'<div class="empty-settings">עוד אין חוגים. זה הזמן להוסיף את הראשון! 🌈</div>';
  $('#weekBoard').innerHTML=days.map(d=>{const found=activities.filter(a=>a.day===d);return `<div class="week-row"><div class="week-day">יום ${d}</div><div>${found.length?found.map(a=>`<span class="week-item" style="--accent:${a.color}">${a.time} · ${a.icon} ${a.name}</span>`).join(' '):'<span class="week-empty">אין חוגים — יום פנוי!</span>'}</div></div>`}).join('');
+ renderFoods();
 }
 function setupChoices(){
  $('#iconChoices').innerHTML=icons.map(x=>`<button type="button" class="choice ${x===selectedIcon?'selected':''}" data-icon="${x}">${x}</button>`).join('');
@@ -101,6 +113,7 @@ document.addEventListener('click',e=>{
  const day=e.target.closest('[data-day]');if(day){selectedDay=day.dataset.day;setupChoices()}
  const edit=e.target.closest('[data-edit]');if(edit){openEdit(Number(edit.dataset.edit))}
  const del=e.target.closest('[data-delete]');if(del){deleteId=Number(del.dataset.delete);const a=activities.find(x=>x.id===deleteId);$('#deleteText').textContent=`אתה בטוח שאתה רוצה למחוק את חוג ${a.name}?`;$('#deleteDialog').showModal()}
+ const food=e.target.closest('[data-food-id]');if(food){const id=food.dataset.foodId;customFoods=customFoods.filter(item=>item.id!==id);favoriteFoods=favoriteFoods.filter(item=>item!==id);saveFoods();renderFoods();toast('המאכל הוסר מהרשימה')}
 });
 function resetForm(){ $('#activityForm').reset();$('#editId').value='';$('#formTitle').textContent='הוספת חוג חדש';selectedIcon=icons[0];selectedColor=colors[1];selectedDay='שני';setupChoices() }
 function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=id;$('#name').value=a.name;$('#time').value=a.time;$('#place').value=a.place;$('#reminder').value=a.reminder;selectedIcon=a.icon;selectedColor=a.color;selectedDay=a.day;$('#formTitle').textContent='עריכת החוג';setupChoices();go('add')}
@@ -110,6 +123,7 @@ $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').on
 $('#settingsBtn').onclick=()=>go('settings');
 $('#enableNotifications').onclick=enableNotifications;
 $('#shareAppBtn').onclick=shareApp;
+$('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
 $('#installAppBtn').onclick=installApp;
 $('#dismissInstall').onclick=()=>{$('#installCard').hidden=true;localStorage.setItem('installPromptDismissed','true')};
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;showInstallCard()});
