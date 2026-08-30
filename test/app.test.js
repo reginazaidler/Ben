@@ -10,6 +10,11 @@ test('application shell includes core Hebrew navigation and form', () => {
   assert.equal((html.match(/<span>★<\/span>/g) || []).length, 7);
 });
 
+test('service worker cache is refreshed after removing site data controls', () => {
+  const worker = fs.readFileSync('service-worker.js', 'utf8');
+  assert.match(worker, /CACHE_NAME='my-activities-v18'/);
+});
+
 test('application logic persists activities and supports editing and deletion', () => {
   const js = fs.readFileSync('app.js', 'utf8');
   assert.match(js, /localStorage\.setItem/);
