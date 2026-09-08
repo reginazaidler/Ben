@@ -12,7 +12,7 @@ test('application shell includes core Hebrew navigation and form', () => {
 
 test('service worker cache is refreshed after removing site data controls', () => {
   const worker = fs.readFileSync('service-worker.js', 'utf8');
-  assert.match(worker, /CACHE_NAME='my-activities-v18'/);
+  assert.match(worker, /CACHE_NAME='my-activities-v19'/);
 });
 
 test('application logic persists activities and supports editing and deletion', () => {
@@ -59,6 +59,7 @@ test('settings page edits and locally persists the profile', () => {
 test('notification controls request permission and schedule activity reminders', () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const js = fs.readFileSync('app.js', 'utf8');
+  const worker = fs.readFileSync('service-worker.js', 'utf8');
   assert.ok(html.includes('id="enableNotifications"'));
   assert.ok(html.includes('id="notificationStatus"'));
   assert.ok(html.includes('id="notificationHelpDialog"'));
@@ -69,6 +70,11 @@ test('notification controls request permission and schedule activity reminders',
   assert.match(js, /function nextReminderDate/);
   assert.match(js, /function scheduleNotifications/);
   assert.match(js, /new Notification/);
+  assert.match(js, /registration\.showNotification/);
+  assert.match(js, /שליחת התראת בדיקה/);
+  assert.match(js, /Math\.min\(delay,MAX_NOTIFICATION_DELAY\)/);
+  assert.match(worker, /notificationclick/);
+  assert.match(worker, /clients\.openWindow/);
 });
 
 test('friends can share the application link with a native or clipboard fallback', () => {

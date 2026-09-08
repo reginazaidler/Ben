@@ -15,6 +15,7 @@ let customFoods=JSON.parse(localStorage.getItem('myCustomFoods')||'null')||[];
 let selectedIcon=icons[0],selectedColor=colors[1],selectedDay='שני',deleteId=null;
 let notificationTimers=[];
 let installPrompt=null;
+const MAX_NOTIFICATION_DELAY=2147483647;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function soft(hex){return hex+'22'}
 function save(){localStorage.setItem('myActivities',JSON.stringify(activities))}
@@ -45,26 +46,43 @@ function nextReminderDate(activity,now=new Date()){
  if(reminder<=now)reminder.setDate(reminder.getDate()+7);
  return reminder;
 }
-function showActivityNotification(activity){
+async function showNotification(title,options){
  if(!('Notification' in window)||Notification.permission!=='granted')return;
- const notification=new Notification(`${activity.icon} הגיע הזמן להתכונן ל${activity.name}!`,{body:`החוג מתחיל ב־${activity.time}${activity.place?` · ${activity.place}`:''}`,tag:`activity-${activity.id}`});
+ if('serviceWorker' in navigator){
+  const registration=await navigator.serviceWorker.ready;
+  await registration.showNotification(title,options);
+  return;
+ }
+ const notification=new Notification(title,options);
  notification.onclick=()=>{window.focus();notification.close()};
+}
+function showActivityNotification(activity){
+ return showNotification(`${activity.icon} הגיע הזמן להתכונן ל${activity.name}!`,{body:`החוג מתחיל ב־${activity.time}${activity.place?` · ${activity.place}`:''}`,tag:`activity-${activity.id}`,data:{url:location.href}});
 }
 function scheduleNotifications(){
  notificationTimers.forEach(clearTimeout);notificationTimers=[];
  if(!('Notification' in window)||Notification.permission!=='granted')return;
  const now=new Date();
- activities.forEach(activity=>{const date=nextReminderDate(activity,now);if(!date)return;const delay=date-now;if(delay<=2147483647)notificationTimers.push(setTimeout(()=>{showActivityNotification(activity);scheduleNotifications()},delay))});
+ activities.forEach(activity=>{const date=nextReminderDate(activity,now);if(!date)return;const delay=date-now;const wait=Math.min(delay,MAX_NOTIFICATION_DELAY);notificationTimers.push(setTimeout(()=>{if(wait===delay)showActivityNotification(activity).catch(()=>{});scheduleNotifications()},wait))});
 }
 function renderNotificationStatus(){
  const status=$('#notificationStatus'),button=$('#enableNotifications');if(!status||!button)return;
  if(!('Notification' in window)){status.textContent='הדפדפן הזה לא תומך בהתראות';button.disabled=true;return}
- const messages={granted:'ההתראות פעילות כל עוד האפליקציה פתוחה',denied:'ההתראות חסומות בהגדרות הדפדפן',default:'כדי לקבל תזכורת, צריך לאשר התראות'};
- status.textContent=messages[Notification.permission];button.disabled=Notification.permission==='granted';button.textContent=Notification.permission==='granted'?'ההתראות פעילות':Notification.permission==='denied'?'איך לאפשר התראות?':'הפעלת התראות';
+ const messages={granted:'ההתראות פעילות. אפשר ללחוץ כדי לבדוק אותן',denied:'ההתראות חסומות בהגדרות הדפדפן',default:'כדי לקבל תזכורת, צריך לאשר התראות'};
+ status.textContent=messages[Notification.permission];button.disabled=false;button.textContent=Notification.permission==='granted'?'שליחת התראת בדיקה':Notification.permission==='denied'?'איך לאפשר התראות?':'הפעלת התראות';
 }
 async function enableNotifications(){
  if(!('Notification' in window))return;
  const permission=await Notification.requestPermission();renderNotificationStatus();scheduleNotifications();toast(permission==='granted'?'ההתראות הופעלו בהצלחה 🔔':'לא ניתן להפעיל התראות. אפשר לשנות זאת בהגדרות הדפדפן');
+ if(permission==='granted')await sendTestNotification();
+}
+async function sendTestNotification(){
+ try{
+  await showNotification('🔔 ההתראות עובדות!',{body:'מעולה — תזכורות לחוגים יופיעו במכשיר הזה.',tag:'notification-test',data:{url:location.href}});
+  toast('התראת בדיקה נשלחה 🔔');
+ }catch(error){
+  toast('לא הצלחנו להציג התראה. כדאי לבדוק את הגדרות הדפדפן');
+ }
 }
 async function shareApp(){
  const shareData={title:'החוגים שלי',text:'בואו ליצור לוח חוגים אישי משלכם!',url:window.location.href};
@@ -134,7 +152,7 @@ function openEdit(id){const a=activities.find(x=>x.id===id);$('#editId').value=i
 $('#activityForm').addEventListener('submit',e=>{e.preventDefault();const id=Number($('#editId').value);const data={id:id||Date.now(),name:$('#name').value.trim(),icon:selectedIcon,color:selectedColor,day:selectedDay,time:$('#time').value,place:$('#place').value.trim(),reminder:$('#reminder').value};if(id)activities=activities.map(a=>a.id===id?data:a);else activities.push(data);save();render();scheduleNotifications();go('home');toast(id?'השינויים נשמרו ✓':'החוג נוסף בהצלחה! 🎉')});
 $('#settingsForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#userName').value.trim();if(!name)return;profile={name,avatar:avatars.includes(profile.avatar)?profile.avatar:avatars[0],themeColor:$('#themeColor').value,largeText:$('#largeText').checked,reduceMotion:$('#reduceMotion').checked,compactCards:$('#compactCards').checked,showShareCard:$('#showShareCard').checked,showFoodSection:$('#showFoodSection').checked};saveProfile();render();go('home');toast('ההגדרות שלך נשמרו ✓')});
 $('#cancelDelete').onclick=()=>$('#deleteDialog').close();$('#confirmDelete').onclick=()=>{activities=activities.filter(a=>a.id!==deleteId);save();render();scheduleNotifications();$('#deleteDialog').close();toast('החוג נמחק')};
-$('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}enableNotifications()};
+$('#enableNotifications').onclick=()=>{if(Notification.permission==='denied'){$('#notificationHelpDialog').showModal();return}if(Notification.permission==='granted'){sendTestNotification();return}enableNotifications()};
 $('#closeNotificationHelp').onclick=()=>$('#notificationHelpDialog').close();
 $('#shareAppBtn').onclick=shareApp;
 $('#customFoodForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#customFoodName').value.trim();if(!name)return;const food={id:`custom-${Date.now()}`,name,emoji:'🍽️',meal:$('#customFoodMeal').value};customFoods.push(food);favoriteFoods.push(food.id);saveFoods();e.target.reset();renderFoods();toast('המאכל נוסף לרשימה שלך! 😋')});
